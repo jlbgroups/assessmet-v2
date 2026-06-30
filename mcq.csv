@@ -1,0 +1,35 @@
+question,type,option a,option b,option c,option d,answer,marks,difficulty,explanation,language,boilerplate,test case input,test case output,code
+What is the capital of France?,mcq,Paris,London,Berlin,Madrid,A,5,easy,Paris is the capital of France.,,,,,
+Which planet is known as the Red Planet?,mcq,Earth,Mars,Jupiter,Venus,B,5,easy,Mars is called the Red Planet.,,,,,
+Which data structure uses FIFO order?,mcq,Stack,Queue,Tree,Graph,B,5,medium,Queue follows First In First Out.,,,,,
+What is the output of len("Python")?,mcq,5,6,7,8,B,5,easy,Python contains 6 characters.,,,,,
+Which company created Java?,mcq,Google,Apple,Sun Microsystems,Microsoft,C,5,medium,Java was originally developed by Sun Microsystems.,,,,,
+
+Which of the following are programming languages?,multiselect,Python,HTML,Java,CSS,"A,C",5,medium,Python and Java are programming languages.,,,,,
+Which are databases?,multiselect,MySQL,PostgreSQL,React,MongoDB,"A,B,D",5,medium,MySQL PostgreSQL and MongoDB are databases.,,,,,
+Which are JavaScript frameworks?,multiselect,React,Angular,Django,Vue,"A,B,D",5,medium,React Angular and Vue are frontend frameworks.,,,,,
+Select prime numbers.,multiselect,2,4,5,9,"A,C",5,easy,2 and 5 are prime numbers.,,,,,
+Which are cloud providers?,multiselect,AWS,Azure,Docker,GCP,"A,B,D",5,medium,AWS Azure and GCP are cloud platforms.,,,,,
+
+The Earth revolves around the Sun.,truefalse,,,,,True,2,easy,Earth orbits the Sun.,,,,,
+Python is a compiled-only language.,truefalse,,,,,False,2,easy,Python is primarily interpreted.,,,,,
+HTTP stands for HyperText Transfer Protocol.,truefalse,,,,,True,2,easy,HTTP expands to HyperText Transfer Protocol.,,,,,
+JavaScript can run in browsers.,truefalse,,,,,True,2,easy,Browsers include JavaScript engines.,,,,,
+The binary value of decimal 10 is 1111.,truefalse,,,,,False,2,medium,Decimal 10 equals binary 1010.,,,,,
+
+Write a function to return factorial of n.,coding,,,,,,10,hard,Return factorial of the given number.,python,"def solution(n):
+    pass",5,120,
+Write a function to return square of a number.,coding,,,,,,5,easy,Return n*n.,python,"def solution(n):
+    pass",7,49,
+Write a function to reverse a string.,coding,,,,,,10,medium,Return reversed string.,python,"def solution(s):
+    pass",hello,olleh,
+Write a function to check whether a number is even.,coding,,,,,,5,easy,Return True if number is even.,python,"def solution(n):
+    pass",8,True,
+Write a function to find the sum of two numbers.,coding,,,,,,5,easy,Return a+b.,javascript,"function solution(a, b) {
+}",3 5,8,
+
+What is the output of the following code?,code_output_mcq,3,4,5,Error,B,5,easy,2 + 2 evaluates to 4.,,,,,print(2 + 2)
+What is the output of the following code?,code_output_mcq,0,1,2,3,C,5,medium,Length of list [1,2] is 2.,,,,,print(len([1,2]))
+What is the output of the following code?,code_output_mcq,HELLO,hello,Hello,Error,B,5,easy,lower() converts text to lowercase.,,,,,print("HELLO".lower())
+What is the output of the following code?,code_output_mcq,25,20,15,10,A,5,medium,5 squared equals 25.,,,,,print(5**2)
+What is the output of the following JavaScript code?,code_output_mcq,10,15,20,25,B,5,medium,10 + 5 equals 15.,,,,,console.log(10 + 5)

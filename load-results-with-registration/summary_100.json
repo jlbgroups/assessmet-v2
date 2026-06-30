@@ -1,0 +1,155 @@
+{
+    "metrics": {
+        "iteration_duration": {
+            "max": 41488.5589,
+            "p(90)": 1001.57081,
+            "p(95)": 1004.81658,
+            "avg": 1589.977853408286,
+            "min": 1000.0002,
+            "med": 1000.62295
+        },
+        "http_req_connecting": {
+            "avg": 2.924407785888075,
+            "min": 0,
+            "med": 0,
+            "max": 153.9669,
+            "p(90)": 4.4663199999999925,
+            "p(95)": 12.936154999999985
+        },
+        "data_received": {
+            "count": 318159,
+            "rate": 683.6819542028604
+        },
+        "http_req_duration{expected_response:true}": {
+            "avg": 3061.731831994646,
+            "min": 1.6419,
+            "med": 1870.8891,
+            "max": 12960.0003,
+            "p(90)": 7949.14426,
+            "p(95)": 9503.15467
+        },
+        "http_req_blocked": {
+            "max": 154.968,
+            "p(90)": 5.030849999999999,
+            "p(95)": 14.482184999999944,
+            "avg": 3.090989781021895,
+            "min": 0,
+            "med": 0
+        },
+        "http_req_receiving": {
+            "min": 0,
+            "med": 0,
+            "max": 7.8209,
+            "p(90)": 0.9958,
+            "p(95)": 0.9981,
+            "avg": 0.24512700729926998
+        },
+        "http_req_tls_handshaking": {
+            "p(95)": 0,
+            "avg": 0,
+            "min": 0,
+            "med": 0,
+            "max": 0,
+            "p(90)": 0
+        },
+        "iterations": {
+            "count": 5692,
+            "rate": 12.231361310925296
+        },
+        "http_req_duration": {
+            "p(90)": 7613.76498,
+            "p(95)": 9401.309925,
+            "avg": 2838.5428216545015,
+            "min": 1.6419,
+            "med": 1812.21285,
+            "max": 12960.0003,
+            "thresholds": {
+                "avg<2000": true,
+                "p(95)<5000": true
+            }
+        },
+        "http_reqs": {
+            "count": 822,
+            "rate": 1.7663701682327113
+        },
+        "data_sent": {
+            "rate": 510.6442926494065,
+            "count": 237634
+        },
+        "vus": {
+            "value": 1,
+            "min": 0,
+            "max": 100
+        },
+        "http_req_failed": {
+            "passes": 75,
+            "fails": 747,
+            "thresholds": {
+                "rate<0.01": true
+            },
+            "value": 0.09124087591240876
+        },
+        "http_req_waiting": {
+            "avg": 2838.2515329683692,
+            "min": 1.5043,
+            "med": 1812.21285,
+            "max": 12960.0003,
+            "p(90)": 7613.76498,
+            "p(95)": 9401.309925
+        },
+        "checks": {
+            "passes": 321,
+            "fails": 0,
+            "value": 1
+        },
+        "http_req_sending": {
+            "avg": 0.04616167883211678,
+            "min": 0,
+            "med": 0,
+            "max": 2.9495,
+            "p(90)": 0,
+            "p(95)": 0.5006699999999941
+        },
+        "vus_max": {
+            "value": 100,
+            "min": 100,
+            "max": 100
+        }
+    },
+    "root_group": {
+        "name": "",
+        "path": "",
+        "id": "d41d8cd98f00b204e9800998ecf8427e",
+        "groups": {},
+        "checks": {
+                "fetch assessment detail 200": {
+                    "id": "cb195b2d28855d24a1e9d7de6b5752d7",
+                    "passes": 100,
+                    "fails": 0,
+                    "name": "fetch assessment detail 200",
+                    "path": "::fetch assessment detail 200"
+                },
+                "system check status update 200": {
+                    "name": "system check status update 200",
+                    "path": "::system check status update 200",
+                    "id": "03005319f0cd0c506ab16a56baf4a569",
+                    "passes": 100,
+                    "fails": 0
+                },
+                "periodic check 200": {
+                    "id": "8aad50a0ec5daf566c979caae327c83b",
+                    "passes": 100,
+                    "fails": 0,
+                    "name": "periodic check 200",
+                    "path": "::periodic check 200"
+                },
+                "submit assessment 200": {
+                    "fails": 0,
+                    "name": "submit assessment 200",
+                    "path": "::submit assessment 200",
+                    "id": "e41e851cab078039dfcb66dfb66aa982",
+                    "passes": 21
+                }
+            }
+    }
+}

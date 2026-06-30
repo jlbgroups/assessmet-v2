@@ -1,0 +1,183 @@
+{
+    "metrics": {
+        "data_sent": {
+            "rate": 5796.270249147567,
+            "count": 1159076
+        },
+        "data_received": {
+            "count": 921540,
+            "rate": 4608.407805354825
+        },
+        "http_reqs": {
+            "count": 2561,
+            "rate": 12.806967022064919
+        },
+        "checks": {
+            "passes": 2552,
+            "fails": 9,
+            "value": 0.9964857477547833
+        },
+        "http_req_duration{expected_response:true}": {
+            "max": 7157.4493,
+            "p(90)": 3184.7325000000005,
+            "p(95)": 4520.297864999999,
+            "avg": 1066.7323351097182,
+            "min": 165.7011,
+            "med": 558.0853999999999
+        },
+        "http_req_tls_handshaking": {
+            "med": 0,
+            "max": 0,
+            "p(90)": 0,
+            "p(95)": 0,
+            "avg": 0,
+            "min": 0
+        },
+        "http_req_waiting": {
+            "p(90)": 3045.7153,
+            "p(95)": 4428.0772,
+            "avg": 1238.696227294026,
+            "min": 164.9215,
+            "med": 550.6994,
+            "max": 59999.5556
+        },
+        "http_req_failed": {
+            "passes": 9,
+            "fails": 2552,
+            "thresholds": {
+                "rate<0.02": false
+            },
+            "value": 0.003514252245216712
+        },
+        "http_req_duration": {
+            "avg": 1273.805129793051,
+            "min": 165.7011,
+            "med": 566.1002,
+            "max": 59999.5556,
+            "p(90)": 3255.6722,
+            "p(95)": 4650.2656,
+            "thresholds": {
+                "p(95)<5000": false,
+                "avg<2000": false
+            }
+        },
+        "vus_max": {
+            "max": 50,
+            "value": 50,
+            "min": 50
+        },
+        "http_req_sending": {
+            "med": 0,
+            "max": 11.9689,
+            "p(90)": 0,
+            "p(95)": 0,
+            "avg": 0.04077282311597031,
+            "min": 0
+        },
+        "http_req_receiving": {
+            "med": 1.8395,
+            "max": 2412.5671,
+            "p(90)": 12.6224,
+            "p(95)": 178.7536,
+            "avg": 35.06812967590785,
+            "min": 0
+        },
+        "http_req_connecting": {
+            "min": 0,
+            "med": 0,
+            "max": 27.6018,
+            "p(90)": 0,
+            "p(95)": 0,
+            "avg": 0.15106130417805544
+        },
+        "http_req_blocked": {
+            "max": 27.6018,
+            "p(90)": 0,
+            "p(95)": 0,
+            "avg": 0.15891034752049982,
+            "min": 0,
+            "med": 0
+        },
+        "iterations": {
+            "count": 415,
+            "rate": 2.075318748206537
+        },
+        "iteration_duration": {
+            "min": 14023.8765,
+            "med": 21542.8501,
+            "max": 62027.7815,
+            "p(90)": 27589.932920000003,
+            "p(95)": 30537.651429999994,
+            "avg": 22738.784512289138
+        },
+        "vus": {
+            "max": 50,
+            "value": 1,
+            "min": 1
+        }
+    },
+    "root_group": {
+        "name": "",
+        "path": "",
+        "id": "d41d8cd98f00b204e9800998ecf8427e",
+        "groups": {},
+        "checks": {
+                "login status is 200": {
+                    "id": "baba87e761865dc93085ee0c1fe25f4c",
+                    "passes": 50,
+                    "fails": 9,
+                    "name": "login status is 200",
+                    "path": "::login status is 200"
+                },
+                "get assessment status is 200": {
+                    "path": "::get assessment status is 200",
+                    "id": "9aa2e65ef0658f7e82a5b478216bf4dd",
+                    "passes": 406,
+                    "fails": 0,
+                    "name": "get assessment status is 200"
+                },
+                "start exam status is 200": {
+                    "id": "5172bf0d6322ec01cfafa52b758659d5",
+                    "passes": 406,
+                    "fails": 0,
+                    "name": "start exam status is 200",
+                    "path": "::start exam status is 200"
+                },
+                "system check status is 200": {
+                    "id": "7e1bedfd29285ba5da11a45912dd04bd",
+                    "passes": 406,
+                    "fails": 0,
+                    "name": "system check status is 200",
+                    "path": "::system check status is 200"
+                },
+                "telemetry update status is 200": {
+                    "name": "telemetry update status is 200",
+                    "path": "::telemetry update status is 200",
+                    "id": "a2d5b9c43a0663d31edd40583b73fbd7",
+                    "passes": 406,
+                    "fails": 0
+                },
+                "violation log status is 200": {
+                    "name": "violation log status is 200",
+                    "path": "::violation log status is 200",
+                    "id": "0b975aee2c805c133e5acd2e8f05b93c",
+                    "passes": 66,
+                    "fails": 0
+                },
+                "submit exam status is 202 or 200": {
+                    "passes": 406,
+                    "fails": 0,
+                    "name": "submit exam status is 202 or 200",
+                    "path": "::submit exam status is 202 or 200",
+                    "id": "e49c06a5e5548847a274bac771dac983"
+                },
+                "submit feedback status is 200": {
+                    "name": "submit feedback status is 200",
+                    "path": "::submit feedback status is 200",
+                    "id": "11abcb7ae912bec42a6360bbb2e87e15",
+                    "passes": 406,
+                    "fails": 0
+                }
+            }
+    }
+}

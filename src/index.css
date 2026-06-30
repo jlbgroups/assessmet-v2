@@ -1,0 +1,131 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Manrope:wght@400;500;600;700;800&family=Outfit:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-background text-dark font-sans antialiased;
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: 'Space Grotesk', 'Outfit', 'Inter', sans-serif;
+    @apply text-dark font-semibold;
+  }
+}
+
+::selection {
+  background: rgba(201, 91, 47, 0.18);
+  color: #10222d;
+}
+
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-slate-300 rounded-full;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  @apply bg-slate-400;
+}
+
+.video-feed-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 16px;
+}
+
+@keyframes border-pulse-success {
+
+  0%,
+  100% {
+    border-color: rgba(22, 163, 74, 0.4);
+  }
+
+  50% {
+    border-color: rgba(22, 163, 74, 1);
+  }
+}
+
+@keyframes border-pulse-warning {
+
+  0%,
+  100% {
+    border-color: rgba(245, 158, 11, 0.4);
+  }
+
+  50% {
+    border-color: rgba(245, 158, 11, 1);
+  }
+}
+
+@keyframes border-pulse-danger {
+
+  0%,
+  100% {
+    border-color: rgba(220, 38, 38, 0.4);
+  }
+
+  50% {
+    border-color: rgba(220, 38, 38, 1);
+  }
+}
+
+.pulse-border-success {
+  animation: border-pulse-success 2s infinite;
+}
+
+.pulse-border-warning {
+  animation: border-pulse-warning 2s infinite;
+}
+
+.pulse-border-danger {
+  animation: border-pulse-danger 2s infinite;
+}
+
+@keyframes fade-rise {
+  0% {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes float-slow {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+.animate-fade-rise {
+  animation: fade-rise 700ms ease-out both;
+}
+
+.animate-float-slow {
+  animation: float-slow 7s ease-in-out infinite;
+}
