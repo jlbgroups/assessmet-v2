@@ -212,11 +212,11 @@ export const PublicSiteLayout: React.FC = () => {
       <header className="sticky top-0 z-40 border-b border-white/60 bg-[#f4efe6]/80 backdrop-blur-xl">
         <div className="mx-auto flex max-w-7xl items-center justify-between gap-6 px-6 py-4 md:px-10">
           <Link to="/" className="flex items-center gap-3">
-            <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-[#10222d] text-white shadow-lg shadow-[#10222d]/15">
-              <ShieldCheck className="h-5 w-5" />
+            <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-white shadow-lg shadow-[#10222d]/15 overflow-hidden">
+              <img src="/logo.png" alt="Logo" className="h-11 w-11 object-contain"/>
             </div>
             <div>
-              <p className="font-display text-lg font-semibold tracking-tight text-[#10222d]">AssessPro AI</p>
+              <p className="font-display text-lg font-semibold tracking-tight text-[#10222d]">Levroxen LLC</p>
               <p className="text-[10px] font-bold uppercase tracking-[0.32em] text-[#8a7863]">Assessment integrity platform</p>
             </div>
           </Link>

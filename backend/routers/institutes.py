@@ -43,7 +43,7 @@ def create_institute(inst_data: schemas.InstituteCreate, db: Session = Depends(g
     db.commit()
     db.refresh(db_inst)
     
-    from backend.services.cache import cache_service
+    from services.cache import cache_service
     cache_service.invalidate("institutes_list")
     
     db.close()

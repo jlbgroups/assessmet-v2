@@ -44,11 +44,11 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
           <div className="flex items-center justify-between h-20">
             <div className="flex items-center gap-8">
               <Link to="/admin" className="flex items-center gap-3 group">
-                <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-[#10222d] text-white shadow-lg shadow-[#10222d]/15">
-                  <Shield className="h-5 w-5" />
+                <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-[#ffffff] text-white shadow-lg shadow-[#10222d]/15">
+                  <img src="/logo.png" alt="Logo" className="h-11 w-11 object-contain"/>
                 </div>
                 <div>
-                  <h2 className="font-bold text-[#10222d] tracking-wide text-sm leading-none">AssessPro AI</h2>
+                  <h2 className="font-bold text-[#10222d] tracking-wide text-sm leading-none">Levroxen LLC</h2>
                   <span className="text-[9px] text-[#8a7863] font-bold uppercase tracking-wider block mt-0.5">Mission Control</span>
                 </div>
               </Link>

@@ -67,11 +67,11 @@ export const CandidateDashboard: React.FC = () => {
     <div className="min-h-screen bg-background text-dark">
       <header className="sticky top-0 z-30 w-full bg-[#f4efe6]/80 border-b border-[#10222d]/8 text-[#10222d] shadow-sm backdrop-blur-xl h-20 px-8 flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-[#10222d] text-white shadow-lg shadow-[#10222d]/15">
-            <Shield className="h-5 w-5" />
+          <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-[#ffffff] text-white shadow-lg shadow-[#10222d]/15">
+            <img src="/logo.png" alt="Logo" className="h-11 w-11 object-contain" />
           </div>
           <div>
-            <h2 className="font-bold text-[#10222d] tracking-wide text-sm leading-none">AssessPro AI</h2>
+            <h2 className="font-bold text-[#10222d] tracking-wide text-sm leading-none">Levroxen LLC</h2>
             <span className="text-[9px] text-[#8a7863] font-bold uppercase tracking-wider block mt-0.5">Candidate Terminal</span>
           </div>
         </div>

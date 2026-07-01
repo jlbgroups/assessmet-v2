@@ -13,13 +13,15 @@ import {
   SectionHeading,
 } from '../components/PublicSiteLayout';
 
+import Footer from "../components/Footer";
+
 const LandingPage: React.FC = () => {
   return (
     <>
       <PageHero
         eyebrow="Assessment platform"
         title="Assessment operations for teams that need trust, speed, and proof."
-        description="AssessPro AI unifies secure exam delivery, live proctoring, coding evaluation, and review-ready reporting so institutions can run high-stakes assessments with less friction."
+        description="Levroxen LLC unifies secure exam delivery, live proctoring, coding evaluation, and review-ready reporting so institutions can run high-stakes assessments with less friction."
         primaryLabel="Explore the platform"
         primaryHref="/platform"
         secondaryLabel="Secure sign in"
@@ -144,6 +146,7 @@ const LandingPage: React.FC = () => {
         secondaryLabel="Open secure sign in"
         secondaryHref="/auth"
       />
+      <Footer/>
     </>
   );
 };

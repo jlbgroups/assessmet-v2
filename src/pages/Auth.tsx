@@ -140,21 +140,21 @@ export const Auth: React.FC = () => {
         <div className="absolute -bottom-40 -left-40 w-[400px] h-[400px] bg-[#176b68]/10 rounded-full filter blur-[100px] pointer-events-none -z-10"></div>
 
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-[#c95b2f] flex items-center justify-center shadow-lg shadow-[#c95b2f]/30">
-            <Shield className="w-5.5 h-5.5 text-white" />
+          <div className="w-10 h-10 rounded-xl bg-[#ffffff] flex items-center justify-center shadow-lg shadow-[#c95b2f]/30">
+            <img src="/logo.png" alt="Logo" className="h-11 w-11 object-contain"/>
           </div>
           <div className="text-left">
-            <h2 className="font-extrabold text-white tracking-wide text-lg leading-none">AssessPro AI</h2>
+            <h2 className="font-extrabold text-white tracking-wide text-lg leading-none">Levroxen LLC</h2>
             <span className="text-[9px] text-[#c7d5da] font-bold uppercase tracking-wider mt-0.5 block">Exam Control Network</span>
           </div>
         </div>
 
-        <div className="my-auto py-12 max-w-lg">
+        <div className="my-auto py-12 w-full max-w-[650px] lg:ml-24 xl:ml-40">
           <h1 className="text-3xl md:text-4xl font-extrabold text-white leading-tight tracking-tight mb-5 text-left font-display">
             Mission Control for Secure Online Examinations.
           </h1>
           <p className="text-[#c7d5da] text-sm leading-relaxed text-left">
-            AssessPro AI combines localized computer-vision tracking, real-time telemetry pipelines, and snapshot audit versioning to protect assessment integrity for premier learning institutions worldwide.
+            Levroxen LLC combines localized computer-vision tracking, real-time telemetry pipelines, and snapshot audit versioning to protect assessment integrity for premier learning institutions worldwide.
           </p>
 
           <div className="mt-10 space-y-4">
@@ -181,7 +181,7 @@ export const Auth: React.FC = () => {
 
         <div className="text-[10px] text-[#c7d5da]/65 font-semibold uppercase tracking-wider flex justify-between">
           <span>Version 2.0</span>
-          <span>© 2026 AssessPro AI Corp</span>
+          <span>© 2026 Levroxen LLC</span>
         </div>
       </div>
 
@@ -221,7 +221,7 @@ export const Auth: React.FC = () => {
                     <input
                       type="text"
                       required
-                      placeholder="e.g. Shnoor Ahmad"
+                      placeholder="e.g. Joe Stan"
                       value={name}
                       onChange={(e) => setName(e.target.value)}
                       className="w-full h-12 bg-white/70 hover:bg-white border border-[#10222d]/10 hover:border-[#10222d]/25 focus:border-[#c95b2f] focus:bg-white text-[#10222d] text-sm rounded-xl pl-12 pr-4 focus:outline-none focus:ring-4 focus:ring-[#c95b2f]/10 transition-all duration-200 placeholder-slate-400"

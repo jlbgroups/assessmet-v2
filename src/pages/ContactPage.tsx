@@ -27,7 +27,7 @@ const ContactPage: React.FC = () => {
       <PageHero
         eyebrow="Contact Us"
         title="Get in touch with our team"
-        description="Have questions about AssessPro AI? Fill out the form below and our team will get back to you shortly."
+        description="Have questions about Levroxen LLC? Fill out the form below and our team will get back to you shortly."
         primaryLabel="Explore Platform"
         primaryHref="/platform"
         secondaryLabel="Secure Sign In"

@@ -27,3 +27,5 @@ myenv
 env
 backup.sql
 *.sql
+__pycache__/
+*.pyc
