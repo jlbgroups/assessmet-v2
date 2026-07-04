@@ -49,7 +49,7 @@ const Footer = () => {
 
           {/* ================= Navigation ================= */}
 
-          <div>
+          {/* <div>
 
             <h3 className="mb-6 text-lg font-semibold tracking-wide">
               NAVIGATION
@@ -95,49 +95,49 @@ const Footer = () => {
 
             </ul>
 
-          </div>
+          </div> */}
                     {/* ================= Expertise ================= */}
 
           <div>
 
-            <h3 className="mb-6 text-lg font-semibold tracking-wide">
-              EXPERTISE
-            </h3>
+            <h1 className="mb-6 text-lg font-semibold tracking-wide text-gray-300 transition">
+              Services
+            </h1>
 
             <ul className="space-y-4">
 
               <li>
-                <a href="#" className="text-gray-300 transition hover:text-white">
+                <a href="https://www.levroxen.com/services" target="_blank" className="text-gray-300 transition hover:text-white">
                   Cloud Management
                 </a>
               </li>
 
               <li>
-                <a href="#" className="text-gray-300 transition hover:text-white">
+                <a href="https://www.levroxen.com/services" className="text-gray-300 transition hover:text-white">
                   Enterprise Management
                 </a>
               </li>
 
               <li>
-                <a href="#" className="text-gray-300 transition hover:text-white">
+                <a href="https://www.levroxen.com/services" className="text-gray-300 transition hover:text-white">
                   Data & AI
                 </a>
               </li>
 
               <li>
-                <a href="#" className="text-gray-300 transition hover:text-white">
+                <a href="https://www.levroxen.com/services" className="text-gray-300 transition hover:text-white">
                   Consulting & Staffing
                 </a>
               </li>
 
               <li>
-                <a href="#" className="text-gray-300 transition hover:text-white">
+                <a href="https://www.levroxen.com/services" className="text-gray-300 transition hover:text-white">
                   Background Verification
                 </a>
               </li>
 
               <li>
-                <a href="#" className="text-gray-300 transition hover:text-white">
+                <a href="https://www.levroxen.com/services" className="text-gray-300 transition hover:text-white">
                   Network Management
                 </a>
               </li>
@@ -229,6 +229,7 @@ const Footer = () => {
 
               <Link
                 to="/privacy-policy"
+                target="_blank"
                 className="text-sm text-gray-400 transition hover:text-white"
               >
                 Privacy Policy
@@ -236,6 +237,7 @@ const Footer = () => {
 
               <Link
                 to="/terms-and-conditions"
+                target="_blank"
                 className="text-sm text-gray-400 transition hover:text-white"
               >
                 Terms & Conditions
@@ -243,6 +245,7 @@ const Footer = () => {
 
               <Link
                 to="/cookies"
+                target = "_blank"
                 className="text-sm text-gray-400 transition hover:text-white"
               >
                 Cookie Policy

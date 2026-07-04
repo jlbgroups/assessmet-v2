@@ -198,7 +198,7 @@ class CodeExecutionService:
                 all_passed = False
                 break
 
-        from backend.database import BgSessionLocal
+        from database import BgSessionLocal
         with BgSessionLocal() as write_db:
             telemetry = write_db.query(models.CodingTelemetry).filter(
                 models.CodingTelemetry.attempt_id == attempt_id,
@@ -365,7 +365,7 @@ class CodeExecutionService:
 
         question_score = int(round((passed_count / total_count) * question_marks)) if total_count > 0 else 0
 
-        from backend.database import BgSessionLocal
+        from database import BgSessionLocal
         with BgSessionLocal() as write_db:
             submission = models.CodeSubmission(
                 attempt_id=attempt_id,

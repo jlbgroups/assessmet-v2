@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { School, Plus, Edit2, Trash2, Calendar, Mail, Phone, Search } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { School, Plus, Edit2, Trash2, Calendar, Mail, Phone, Search, Users } from 'lucide-react';
 import { apiFetch, parseUTCDate } from '../utils/api';
 import AdminLayout from '../components/AdminLayout';
 
 export const Institutes: React.FC = () => {
+  const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [institutes, setInstitutes] = useState<any[]>([]);
   const [error, setError] = useState<string | null>(null);
@@ -206,7 +208,7 @@ export const Institutes: React.FC = () => {
                         <span className="text-slate-400">No deadline</span>
                       )}
                     </td>
-                    <td className="px-6 py-5 text-right space-x-2">
+                    {/* <td className="px-6 py-5 text-right space-x-2">
                       <button
                         onClick={() => handleOpenEdit(inst)}
                         className="p-2 border border-slate-200 text-slate-600 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-all"
@@ -219,6 +221,36 @@ export const Institutes: React.FC = () => {
                       >
                         <Trash2 className="w-4 h-4" />
                       </button>
+                    </td> */}
+
+                    <td className="px-6 py-5">
+                      <div className="flex justify-end items-center gap-2">
+
+                        <button
+                          onClick={() =>
+                            navigate(`/admin/institutes/${inst.id}/students`)
+                          }
+                          className="flex items-center gap-2 px-3 h-9 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition"
+                        >
+                          <Users className="w-4 h-4" />
+                          Students
+                        </button>
+
+                        <button
+                          onClick={() => handleOpenEdit(inst)}
+                          className="p-2 border border-slate-200 text-slate-600 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-all"
+                        >
+                          <Edit2 className="w-4 h-4" />
+                        </button>
+
+                        <button
+                          onClick={() => handleDelete(inst.id)}
+                          className="p-2 border border-slate-200 text-slate-600 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-all"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+
+                      </div>
                     </td>
                   </tr>
                 ))}

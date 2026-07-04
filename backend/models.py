@@ -1,4 +1,4 @@
-import datetime
+from datetime import datetime
 from sqlalchemy import Column, Integer, String, Text, DateTime, Boolean, ForeignKey, JSON, Float, Index
 from sqlalchemy.orm import relationship
 from database import Base
@@ -64,10 +64,57 @@ class Assessment(Base):
     start_date = Column(DateTime, nullable=False)
     end_date = Column(DateTime, nullable=False)
     active_version = Column(Integer, default=1)
-
     questions = relationship("Question", back_populates="assessment", cascade="all, delete-orphan")
     snapshots = relationship("AssessmentSnapshot", back_populates="assessment", cascade="all, delete-orphan")
     assignments = relationship("Assignment", back_populates="assessment", cascade="all, delete-orphan")
+
+class BulkAssignmentBatch(Base):
+    __tablename__ = "bulk_assignment_batches"
+
+    id = Column(Integer, primary_key=True, index=True)
+
+    assessment_id = Column(
+        Integer,
+        ForeignKey("assessments.id"),
+        nullable=False
+    )
+
+    institute_id = Column(
+        Integer,
+        ForeignKey("institutes.id"),
+        nullable=False
+    )
+
+    assigned_count = Column(Integer, nullable=False)
+
+    first_student_id = Column(
+        Integer,
+        ForeignKey("users.id"),
+        nullable=True
+    )
+
+    last_student_id = Column(
+        Integer,
+        ForeignKey("users.id"),
+        nullable=True
+    )
+
+    created_by = Column(
+        Integer,
+        ForeignKey("users.id"),
+        nullable=True
+    )
+
+    created_at = Column(
+        DateTime,
+        default=datetime.utcnow
+    )
+    
+    range_start = Column(Integer, nullable=True)
+    range_end = Column(Integer, nullable=True)
+
+    assessment = relationship("Assessment")
+    institute = relationship("Institute")
 
 
 class AssessmentSnapshot(Base):
@@ -81,7 +128,7 @@ class AssessmentSnapshot(Base):
     version = Column(Integer, nullable=False)
     snapshot_data = Column(JSON, nullable=False) 
     candidate_snapshot_data = Column(JSON, nullable=True)
-    created_at = Column(DateTime, default=datetime.datetime.utcnow)
+    created_at = Column(DateTime, default=datetime.utcnow)
 
     assessment = relationship("Assessment", back_populates="snapshots")
     attempts = relationship("Attempt", back_populates="snapshot", cascade="all, delete-orphan")
@@ -123,7 +170,7 @@ class Assignment(Base):
     end_date = Column(DateTime, nullable=True)
     role = Column(String, nullable=True)
     job_title = Column(String, nullable=True)
-
+    batch_id= Column(Integer,ForeignKey("bulk_assignment_batches.id"),nullable=True)
     assessment = relationship("Assessment", back_populates="assignments")
     node_institute = relationship("Institute", back_populates="assignments")
     institute = relationship("Institute", back_populates="assignments")
@@ -138,7 +185,7 @@ class Attempt(Base):
     id = Column(Integer, primary_key=True, index=True)
     user_id = Column(Integer, ForeignKey("users.id"), nullable=False, index=True)
     assessment_snapshot_id = Column(Integer, ForeignKey("assessment_snapshots.id"), nullable=False)
-    started_at = Column(DateTime, default=datetime.datetime.utcnow)
+    started_at = Column(DateTime, default=datetime.utcnow)
     completed_at = Column(DateTime, nullable=True)
     score = Column(Integer, nullable=True)
     status = Column(String, default="active", index=True)  
@@ -176,7 +223,7 @@ class Violation(Base):
     attempt_id = Column(Integer, ForeignKey("attempts.id"), nullable=False, index=True)
     type = Column(String, nullable=False) 
     severity = Column(String, default="medium")  
-    timestamp = Column(DateTime, default=datetime.datetime.utcnow, index=True)
+    timestamp = Column(DateTime, default=datetime.utcnow, index=True)
     screenshot_path = Column(String, nullable=True, index=True)
     details = Column(Text, nullable=True)
 
@@ -204,7 +251,7 @@ class AttemptCodeDraft(Base):
     question_id = Column(Integer, ForeignKey("questions.id", ondelete="CASCADE"), nullable=False, index=True)
     language = Column(String, nullable=False)
     source_code = Column(Text, nullable=False)
-    updated_at = Column(DateTime, default=datetime.datetime.utcnow, onupdate=datetime.datetime.utcnow)
+    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
     attempt = relationship("Attempt", back_populates="code_drafts")
 
@@ -229,7 +276,7 @@ class CodeSubmission(Base):
     total_cases = Column(Integer, default=0)
     score = Column(Integer, default=0)
     is_draft = Column(Boolean, default=False)
-    created_at = Column(DateTime, default=datetime.datetime.utcnow)
+    created_at = Column(DateTime, default=datetime.utcnow)
 
     attempt = relationship("Attempt", back_populates="code_submissions")
 
@@ -256,7 +303,7 @@ class AuditLog(Base):
     email = Column(String, index=True, nullable=True)
     action = Column(String, nullable=False, index=True)
     details = Column(Text, nullable=True)
-    timestamp = Column(DateTime, default=datetime.datetime.utcnow, index=True)
+    timestamp = Column(DateTime, default=datetime.utcnow, index=True)
     ip_address = Column(String, nullable=True)
     user_agent = Column(String, nullable=True)
 

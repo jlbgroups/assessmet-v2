@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import Auth from './pages/Auth';
 import AdminDashboard from './pages/AdminDashboard';
 import Institutes from './pages/Institutes';
+import InstituteStudents from "./pages/InstituteStudents";
 import Assessments from './pages/Assessments';
 import LiveProctoring from './pages/LiveProctoring';
 import Violations from './pages/Violations';
@@ -16,6 +17,9 @@ import LandingPage from './pages/LandingPage';
 import PlatformPage from './pages/PlatformPage';
 import ContactPage from './pages/ContactPage';
 import PublicSiteLayout from './components/PublicSiteLayout';
+import PrivacyPolicy from './pages/PrivacyPolicy';
+import TermsConditions from './pages/TermsConditions';
+import CookiePolicy from './pages/CookiePolicy';
 import { getAuthToken } from './utils/api';
 
 const ProtectedRoute: React.FC<{ children: React.ReactNode; allowedRole: string }> = ({ children, allowedRole }) => {
@@ -133,6 +137,26 @@ function App() {
               <Feedback />
             </ProtectedRoute>
           }
+        />
+        <Route 
+        path="/privacy-policy" 
+        element={<PrivacyPolicy />}
+        />
+        <Route 
+        path="/terms-and-conditions"
+        element={<TermsConditions />}
+        />
+        <Route
+        path="/cookies"
+        element={<CookiePolicy />}
+        />
+        <Route
+        path="/admin/institutes/:id/students"
+        element={
+          <ProtectedRoute allowedRole="admin">
+            <InstituteStudents />
+          </ProtectedRoute>
+        }
         />
 
         <Route path="*" element={<Navigate to="/" replace />} />

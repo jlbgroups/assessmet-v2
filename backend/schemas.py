@@ -343,3 +343,13 @@ class CodingTelemetryUpdateRequest(BaseModel):
     question_id: int
     event_type: str 
     paste_length: Optional[int] = None
+    
+class BulkAutoAssignRequest(BaseModel):
+    institute_id: int
+    from_serial: int
+    to_serial: int
+    start_date: Optional[datetime] = None
+    end_date: Optional[datetime] = None
+
+    role: Optional[str] = None
+    job_title: Optional[str] = None

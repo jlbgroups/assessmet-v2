@@ -3,6 +3,7 @@ import logging
 from typing import List, Dict, Any, Union
 from datetime import datetime
 import asyncio
+from sqlalchemy import func
 
 logger = logging.getLogger(__name__)
 
@@ -132,7 +133,7 @@ def build_submission_jobs(questions: List[dict], candidate_answers: Dict[str, An
 
 
 async def finalize_coding_scores(attempt_id: int, base_score: int, coding_jobs: List[Dict[str, Any]]) -> None:
-    from backend.services.code_execution import CodeExecutionService
+    from services.code_execution import CodeExecutionService
 
     execution_service = CodeExecutionService()
     final_score = base_score
@@ -526,6 +527,203 @@ def assign_assessment(id: int, assign_data: Dict[str, Any], db: Session = Depend
     db.commit()
     return {"detail": "Assessment successfully assigned"}
 
+@router.post("/{id}/bulk-auto-assign")
+def bulk_auto_assign(
+    id: int,
+    payload: schemas.BulkAutoAssignRequest,
+    db: Session = Depends(get_db),
+    admin: models.User = Depends(get_current_admin)
+):
+    assessment = (
+        db.query(models.Assessment)
+        .filter(models.Assessment.id == id)
+        .first()
+        )
+    if not assessment:
+        raise HTTPException(
+            status_code=404,
+            detail="Assessment not found"
+        )
+    institute = (
+        db.query(models.Institute)
+        .filter(models.Institute.id == payload.institute_id)
+        .first()
+    )
+    if not institute:
+        raise HTTPException(
+            status_code=404,
+            detail="Institute not found"
+            )
+    existing_batch = (
+        db.query(models.BulkAssignmentBatch)
+        .filter(
+            models.BulkAssignmentBatch.assessment_id == id,
+            models.BulkAssignmentBatch.institute_id == payload.institute_id,
+            models.BulkAssignmentBatch.range_start == payload.from_serial,
+            models.BulkAssignmentBatch.range_end == payload.to_serial,
+        )
+        .first()
+    )
+
+    if existing_batch:
+        raise HTTPException(
+            status_code=400,
+            detail=f"Range {payload.from_serial}-{payload.to_serial} is already assigned."
+        )
+    already_assigned_ids = (
+        db.query(models.Assignment.user_id)
+        .filter(
+            models.Assignment.institute_id == payload.institute_id,
+            models.Assignment.user_id.isnot(None)
+            )
+        .distinct()
+        .all()
+        )
+    already_assigned_ids = [
+        row[0]
+        for row in already_assigned_ids
+    ]
+    
+    
+    students_query = (
+        db.query(models.User)
+        .filter(
+            models.User.institute_id == payload.institute_id,
+            models.User.role == "candidate",
+            models.User.status == "active",
+            )
+        )
+    # if already_assigned_ids:
+    #     students_query = students_query.filter(
+    #         ~models.User.id.in_(already_assigned_ids)
+    #     )
+    count = payload.to_serial - payload.from_serial + 1
+    students = (
+        students_query
+        .order_by(models.User.name.asc())
+        .offset(payload.from_serial - 1)
+        .limit(count)
+        .all()
+    )
+    existing_batch = (
+        db.query(models.BulkAssignmentBatch)
+        .filter(
+            models.BulkAssignmentBatch.assessment_id == id,
+            models.BulkAssignmentBatch.institute_id == payload.institute_id,
+            models.BulkAssignmentBatch.range_start <= payload.to_serial,
+            models.BulkAssignmentBatch.range_end >= payload.from_serial
+        )
+        .first()
+    )
+    if existing_batch:
+        raise HTTPException(
+            status_code=400,
+            detail=f"Range {payload.from_serial}-{payload.to_serial} overlaps with an existing batch range {existing_batch.range_start}-{existing_batch.range_end}."
+        )
+    if not students:
+        return{
+            "message": "No students remaining for assignment.",
+            "assigned_count": 0,
+            "remaining_students": 0
+        }
+    batch = models.BulkAssignmentBatch(
+        assessment_id=id,
+        institute_id=payload.institute_id,
+        assigned_count = count,
+        first_student_id=students[0].id if students else None,
+        last_student_id=students[-1].id if students else None,
+        range_start=payload.from_serial,
+        range_end=payload.to_serial,
+        created_by=admin.id
+    )
+    db.add(batch)
+    db.flush()
+    for student in students:
+        db_assign = models.Assignment(
+            assessment_id=id,
+            institute_id=payload.institute_id,
+            user_id=student.id,
+            start_date=payload.start_date,
+            end_date=payload.end_date,
+            role=payload.role,
+            job_title=payload.job_title,
+            batch_id=batch.id
+        )
+        db.add(db_assign)
+    db.commit()
+    total_students = (
+        db.query(models.User).filter(
+        models.User.institute_id == payload.institute_id,
+        models.User.role == "candidate",
+        models.User.status == "active"
+    ).count()
+    )
+    already_assigned_count = (
+        db.query(
+        func.coalesce(
+            func.sum(models.BulkAssignmentBatch.assigned_count),
+            0
+        )
+    )
+    .filter(
+        models.BulkAssignmentBatch.institute_id == payload.institute_id
+    )
+    .scalar()
+    )
+    remaining_students = ( total_students - already_assigned_count
+    )
+    return {
+    "message": "Bulk assignment completed successfully.",
+    "batch": {
+        "id": batch.id,
+        "assessment_id": assessment.id,
+        "assigned_at" : batch.created_at
+        },
+    "assessment": assessment.name,
+    "assigned_count": len(students),
+    "total_students": total_students,
+    "already_assigned": already_assigned_count,
+    "progress": {"assigned": already_assigned_count + len(students), "total": total_students},
+    "range": {"start": already_assigned_count + 1,"end": already_assigned_count + len(students)},
+    "next_assignment_start":already_assigned_count + 1,
+    "next_assignment_end":already_assigned_count + len(students),
+    "remaining_students": remaining_students,
+    "first_student": students[0].name,
+    "last_student": students[-1].name,
+    "assigned_students": [
+        {
+            "id": s.id,
+            "name": s.name,
+            "email": s.email
+        }
+        for s in students
+    ]
+
+}
+    
+@router.get("/institutes/{institute_id}/assignment-history")
+def get_assignment_history(
+    institute_id: int,
+    db: Session = Depends(get_db),
+    admin: models.User = Depends(get_current_admin)
+    ):
+    institute = (
+        db.query(models.Institute)
+        .filter(models.Institute.id == institute_id)
+        .first()
+    )
+    if not institute:
+        raise HTTPException(
+            status_code=404,
+            detail="Institute not found"
+        )
+    assignments = (
+        db.query(models.Assignment)
+        .filter(models.Assignment.institute_id == institute_id)
+        .order_by(models.Assignment.created_at.desc())
+        .all()
+    )
+    return assignments
 
 @router.delete("/assignments/{assignment_id}")
 def delete_assignment(assignment_id: int, db: Session = Depends(get_db), admin: models.User = Depends(get_current_admin)):

@@ -29,3 +29,5 @@ backup.sql
 *.sql
 __pycache__/
 *.pyc
+load_tests
+load-result-with-registration
