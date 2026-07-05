@@ -171,9 +171,10 @@ def get_institute_students(
         for student in students_with_serial
     ]
 
-@router.get("/{id}/bulk-summary")
+@router.get("/{id}/bulk-summary/{assessment_id}")
 def get_bulk_summary(
     id: int,
+    assessment_id: int,
     db: Session = Depends(get_db),
     admin: models.User = Depends(get_current_admin)
 ):
@@ -209,7 +210,8 @@ def get_bulk_summary(
             )
         )
         .filter(
-            models.BulkAssignmentBatch.institute_id == id
+            models.BulkAssignmentBatch.institute_id == id,
+            models.BulkAssignmentBatch.assessment_id == assessment_id
         )
         .scalar()
     )

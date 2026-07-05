@@ -241,8 +241,7 @@ def get_assessments(db: Session = Depends(get_db), current_user: models.User = D
         assignments = db.query(models.Assignment).options(
             joinedload(models.Assignment.assessment)
         ).filter(
-            (models.Assignment.user_id == current_user.id) | 
-            (models.Assignment.institute_id == current_user.institute_id)
+            models.Assignment.user_id == current_user.id
         ).all()
         
         assigned_assessments = []
@@ -605,6 +604,16 @@ def bulk_auto_assign(
         .limit(count)
         .all()
     )
+    student_ids = [student.id for student in students]
+    existing_assignment_ids = set(
+        row[0]
+        for row in db.query(models.Assignment.user_id)
+        .filter(
+            models.Assignment.assessment_id == id,
+            models.Assignment.user_id.in_(student_ids)
+        )
+        .all()
+    )
     existing_batch = (
         db.query(models.BulkAssignmentBatch)
         .filter(
@@ -629,7 +638,7 @@ def bulk_auto_assign(
     batch = models.BulkAssignmentBatch(
         assessment_id=id,
         institute_id=payload.institute_id,
-        assigned_count = count,
+        assigned_count = 0,
         first_student_id=students[0].id if students else None,
         last_student_id=students[-1].id if students else None,
         range_start=payload.from_serial,
@@ -638,7 +647,14 @@ def bulk_auto_assign(
     )
     db.add(batch)
     db.flush()
+    new_assigned = []
+    skipped_students = []
+    new_assigment = []
     for student in students:
+        if student.id in existing_assignment_ids:
+            skipped_students.append(student)
+            continue
+        
         db_assign = models.Assignment(
             assessment_id=id,
             institute_id=payload.institute_id,
@@ -650,6 +666,12 @@ def bulk_auto_assign(
             batch_id=batch.id
         )
         db.add(db_assign)
+        new_assigned.append(student)
+        new_assigment.append(db_assign)
+    batch.assigned_count = len(new_assigned)
+    if new_assigned:
+        batch.first_student_id = new_assigned[0].id
+        batch.last_student_id = new_assigned[-1].id
     db.commit()
     total_students = (
         db.query(models.User).filter(
@@ -666,7 +688,8 @@ def bulk_auto_assign(
         )
     )
     .filter(
-        models.BulkAssignmentBatch.institute_id == payload.institute_id
+        models.BulkAssignmentBatch.institute_id == payload.institute_id,
+        models.BulkAssignmentBatch.assessment_id == id
     )
     .scalar()
     )
@@ -680,23 +703,24 @@ def bulk_auto_assign(
         "assigned_at" : batch.created_at
         },
     "assessment": assessment.name,
-    "assigned_count": len(students),
+    "assigned_count": len(new_assigned),
+    "skipped_count": len(skipped_students),
     "total_students": total_students,
     "already_assigned": already_assigned_count,
-    "progress": {"assigned": already_assigned_count + len(students), "total": total_students},
+    "progress": {"assigned": already_assigned_count , "total": total_students},
     "range": {"start": already_assigned_count + 1,"end": already_assigned_count + len(students)},
     "next_assignment_start":already_assigned_count + 1,
     "next_assignment_end":already_assigned_count + len(students),
     "remaining_students": remaining_students,
-    "first_student": students[0].name,
-    "last_student": students[-1].name,
+    "first_student": new_assigned[0].name if new_assigned else None,
+    "last_student": new_assigned[-1].name if new_assigned else None,
     "assigned_students": [
         {
             "id": s.id,
             "name": s.name,
             "email": s.email
         }
-        for s in students
+        for s in new_assigned
     ]
 
 }

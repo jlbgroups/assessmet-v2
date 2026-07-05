@@ -27,7 +27,7 @@ const BulkAssignmentDrawer: React.FC<BulkAssignmentDrawerProps> = ({
             setLoading(true);
 
             const data = await apiFetch(
-                `/api/institutes/${instituteId}/bulk-summary`
+                `/api/institutes/${instituteId}/bulk-summary/${selectedAssessment}`
             );
 
             setSummary(data);
@@ -75,21 +75,35 @@ const BulkAssignmentDrawer: React.FC<BulkAssignmentDrawerProps> = ({
 
         try {
 
-            await apiFetch(
+            const response = await apiFetch(
                 `/api/assessments/${selectedAssessment}/bulk-auto-assign`,
                 {
                     method: "POST",
                     body: JSON.stringify({
                         institute_id: instituteId,
                         from_serial: from,
-                        to_serial: to
+                        to_serial: to,
                     }),
                 }
             );
 
-            alert("Assessment assigned successfully.");
+            // Backend se assigned_count aayega
+            if (response.assigned_count === 0) {
 
-            fetchSummary();
+                alert("Selected students already have this assessment.");
+
+            } else {
+
+                let message = `${response.assigned_count} student(s) assigned successfully.`;
+
+                if (response.skipped_count > 0) {
+                    message += `\n${response.skipped_count} student(s) were skipped because they already had this assessment.`;
+                }
+
+                alert(message);
+            }
+
+            await fetchSummary();
             onSuccess();
 
         } catch (err: any) {
@@ -102,10 +116,15 @@ const BulkAssignmentDrawer: React.FC<BulkAssignmentDrawerProps> = ({
 
     useEffect(() => {
         if (open) {
-            fetchSummary();
             fetchAssessments();
         }
     }, [open]);
+    useEffect(() => {
+        if (open && selectedAssessment){
+            fetchSummary();
+        }
+    },[selectedAssessment]
+    );
 
     // const assignCount = rangeEnd - rangeStart + 1;
 
@@ -123,24 +142,42 @@ const BulkAssignmentDrawer: React.FC<BulkAssignmentDrawerProps> = ({
 
         <div className="fixed inset-0 bg-black/40 z-50">
 
-            <div className="absolute right-0 top-0 h-full w-[480px] bg-white shadow-xl">
+            <div
+                className="
+                absolute
+                right-0
+                top-0
+                h-full
+                w-[480px]
+                bg-white
+                shadow-xl
+                flex
+                flex-col
+            "
+            >
 
-                <div className="p-6 border-b flex justify-between items-center">
+                {/* ================= HEADER ================= */}
+
+                <div className="p-6 border-b flex items-center justify-between flex-shrink-0">
 
                     <h2 className="text-xl font-semibold">
+
                         Bulk Assessment Assignment
+
                     </h2>
 
                     <button
                         onClick={onClose}
-                        className="text-slate-500 hover:text-black"
+                        className="text-slate-500 hover:text-black text-2xl"
                     >
-                        ✕
+                        ×
                     </button>
 
                 </div>
 
-                <div className="p-6">
+                {/* ================= SCROLLABLE BODY ================= */}
+
+                <div className="flex-1 overflow-y-auto p-6">
 
                     <div className="space-y-6">
 
@@ -149,34 +186,50 @@ const BulkAssignmentDrawer: React.FC<BulkAssignmentDrawerProps> = ({
                         <div>
 
                             <label className="block text-sm font-medium mb-2">
+
                                 Assessment
+
                             </label>
+
                             <select
                                 value={selectedAssessment}
-                                onChange={(e) => setSelectedAssessment(e.target.value)}
+                                onChange={(e) =>
+                                    setSelectedAssessment(e.target.value)
+                                }
                                 className="w-full h-11 border rounded-lg px-3"
                             >
-                                <option value="">Select Assessment</option>
+
+                                <option value="">
+
+                                    Select Assessment
+
+                                </option>
 
                                 {assessments.map((assessment) => (
+
                                     <option
                                         key={assessment.id}
                                         value={assessment.id}
                                     >
+
                                         {assessment.name}
+
                                     </option>
+
                                 ))}
 
                             </select>
 
                         </div>
 
-                        {/* Students */}
+                        {/* Assignment Range */}
 
                         <div>
 
                             <label className="block text-sm font-medium mb-3">
+
                                 Assignment Range
+
                             </label>
 
                             <div className="grid grid-cols-2 gap-4">
@@ -271,9 +324,9 @@ const BulkAssignmentDrawer: React.FC<BulkAssignmentDrawerProps> = ({
 
                         </div>
 
-                        {/* Range */}
+                        {/* Next Assignment Range */}
 
-                        <div className="rounded-lg border p-4">
+                        <div className="rounded-xl border p-5">
 
                             <div className="text-sm text-slate-500">
 
@@ -281,7 +334,7 @@ const BulkAssignmentDrawer: React.FC<BulkAssignmentDrawerProps> = ({
 
                             </div>
 
-                            <div className="text-2xl font-bold mt-2">
+                            <div className="text-3xl font-bold mt-3">
 
                                 {rangeStart} → {rangeEnd}
 
@@ -289,61 +342,82 @@ const BulkAssignmentDrawer: React.FC<BulkAssignmentDrawerProps> = ({
 
                         </div>
 
-                        {/* Preview */}
+                        {/* Student Preview */}
 
-                        <div className="rounded-lg border p-4">
+                        <div className="rounded-xl border p-5">
 
-                            <div className="font-semibold mb-3">
+                            <h3 className="font-semibold text-lg mb-4">
 
                                 Student Preview
 
-                            </div>
+                            </h3>
 
-                            <div className="space-y-2 text-sm">
-                                {summary?.preview?.map((student: any) => (
+                            {summary?.preview?.length ? (
 
-                                    <div
-                                        key={student.id}
-                                        className="flex justify-between"
-                                    >
+                                <div className="space-y-3">
 
-                                        <span>
+                                    {summary.preview.map((student: any) => (
 
-                                            {student.serial_no}.
+                                        <div
+                                            key={student.id}
+                                            className="flex justify-between items-center"
+                                        >
 
-                                        </span>
+                                            <span className="text-slate-600">
 
-                                        <span>
+                                                {student.serial_no}.
 
-                                            {student.name}
+                                            </span>
 
-                                        </span>
+                                            <span className="font-medium">
 
-                                    </div>
+                                                {student.name}
 
-                                ))}
-                            </div>
+                                            </span>
+
+                                        </div>
+
+                                    ))}
+
+                                </div>
+
+                            ) : (
+
+                                <div className="text-slate-500">
+
+                                    No students found.
+
+                                </div>
+
+                            )}
 
                         </div>
 
-                        {/* Button */}
-
-                        <button
-                            onClick={handleBulkAssign}
-                            className="w-full h-12 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white font-semibold"
-                        >
-
-                            Assign Assessment
-
-                        </button>
-
                     </div>
+
+                </div>
+
+                {/* ================= FOOTER ================= */}
+
+                <div className="border-t bg-white p-5 flex-shrink-0">
+
+                    <button
+                        onClick={handleBulkAssign}
+                        className="w-full h-12 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white font-semibold transition-colors"
+                    >
+
+                        Assign Assessment
+
+                    </button>
+
 
                 </div>
 
             </div>
 
         </div>
+
+
 
     );
 
