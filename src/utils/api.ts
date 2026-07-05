@@ -1,4 +1,4 @@
-const BASE_URL = '';
+const BASE_URL = 'http://127.0.0.1:8000';
 
 export interface ApiRequestOptions extends RequestInit {
   useExamToken?: boolean;
