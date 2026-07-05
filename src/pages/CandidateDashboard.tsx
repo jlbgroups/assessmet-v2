@@ -126,7 +126,7 @@ export const CandidateDashboard: React.FC = () => {
                     <p className="text-xs text-slate-500 max-w-2xl">{assess.description || 'No description provided.'}</p>
                     <div className="flex flex-wrap gap-4 text-[10px] text-slate-400 font-semibold uppercase tracking-wider">
                       <span className="flex items-center gap-1"><Clock className="w-3.5 h-3.5" /> {assess.duration_minutes} Minutes</span>
-                      <span className="flex items-center gap-1"><Calendar className="w-3.5 h-3.5" /> Closes: {parseUTCDate(assess.end_date).toLocaleDateString()}</span>
+                      <span className="flex items-center gap-1"><Calendar className="w-3.5 h-3.5" /> Closes: {parseUTCDate(assess.end_date).toLocaleDateString("en-IN")}</span>
                     </div>
                   </div>
 

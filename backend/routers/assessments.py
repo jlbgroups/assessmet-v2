@@ -569,19 +569,19 @@ def bulk_auto_assign(
             status_code=400,
             detail=f"Range {payload.from_serial}-{payload.to_serial} is already assigned."
         )
-    already_assigned_ids = (
-        db.query(models.Assignment.user_id)
-        .filter(
-            models.Assignment.institute_id == payload.institute_id,
-            models.Assignment.user_id.isnot(None)
-            )
-        .distinct()
-        .all()
-        )
-    already_assigned_ids = [
-        row[0]
-        for row in already_assigned_ids
-    ]
+    # already_assigned_ids = (
+    #     db.query(models.Assignment.user_id)
+    #     .filter(
+    #         models.Assignment.institute_id == payload.institute_id,
+    #         models.Assignment.user_id.isnot(None)
+    #         )
+    #     .distinct()
+    #     .all()
+    #     )
+    # already_assigned_ids = [
+    #     row[0]
+    #     for row in already_assigned_ids
+    # ]
     
     
     students_query = (
@@ -596,14 +596,13 @@ def bulk_auto_assign(
     #     students_query = students_query.filter(
     #         ~models.User.id.in_(already_assigned_ids)
     #     )
-    count = payload.to_serial - payload.from_serial + 1
-    students = (
+    all_students = (
         students_query
         .order_by(models.User.name.asc())
-        .offset(payload.from_serial - 1)
-        .limit(count)
         .all()
     )
+    count = payload.to_serial - payload.from_serial + 1
+    students = all_students[payload.from_serial - 1: payload.to_serial]
     student_ids = [student.id for student in students]
     existing_assignment_ids = set(
         row[0]
@@ -614,21 +613,21 @@ def bulk_auto_assign(
         )
         .all()
     )
-    existing_batch = (
-        db.query(models.BulkAssignmentBatch)
-        .filter(
-            models.BulkAssignmentBatch.assessment_id == id,
-            models.BulkAssignmentBatch.institute_id == payload.institute_id,
-            models.BulkAssignmentBatch.range_start <= payload.to_serial,
-            models.BulkAssignmentBatch.range_end >= payload.from_serial
-        )
-        .first()
-    )
-    if existing_batch:
-        raise HTTPException(
-            status_code=400,
-            detail=f"Range {payload.from_serial}-{payload.to_serial} overlaps with an existing batch range {existing_batch.range_start}-{existing_batch.range_end}."
-        )
+    # existing_batch = (
+    #     db.query(models.BulkAssignmentBatch)
+    #     .filter(
+    #         models.BulkAssignmentBatch.assessment_id == id,
+    #         models.BulkAssignmentBatch.institute_id == payload.institute_id,
+    #         models.BulkAssignmentBatch.range_start <= payload.to_serial,
+    #         models.BulkAssignmentBatch.range_end >= payload.from_serial
+    #     )
+    #     .first()
+    # )
+    # if existing_batch:
+    #     raise HTTPException(
+    #         status_code=400,
+    #         detail=f"Range {payload.from_serial}-{payload.to_serial} overlaps with an existing batch range {existing_batch.range_start}-{existing_batch.range_end}."
+    #     )
     if not students:
         return{
             "message": "No students remaining for assignment.",
@@ -649,7 +648,6 @@ def bulk_auto_assign(
     db.flush()
     new_assigned = []
     skipped_students = []
-    new_assigment = []
     for student in students:
         if student.id in existing_assignment_ids:
             skipped_students.append(student)
@@ -667,19 +665,20 @@ def bulk_auto_assign(
         )
         db.add(db_assign)
         new_assigned.append(student)
-        new_assigment.append(db_assign)
+    if not new_assigned:
+
+        db.rollback()
+
+        raise HTTPException(
+            status_code=400,
+            detail="All students in selected range are already assigned."
+        )
     batch.assigned_count = len(new_assigned)
     if new_assigned:
         batch.first_student_id = new_assigned[0].id
         batch.last_student_id = new_assigned[-1].id
     db.commit()
-    total_students = (
-        db.query(models.User).filter(
-        models.User.institute_id == payload.institute_id,
-        models.User.role == "candidate",
-        models.User.status == "active"
-    ).count()
-    )
+    total_students = len(all_students)
     already_assigned_count = (
         db.query(
         func.coalesce(
@@ -693,7 +692,7 @@ def bulk_auto_assign(
     )
     .scalar()
     )
-    remaining_students = ( total_students - already_assigned_count
+    remaining_students = max( total_students - already_assigned_count, 0
     )
     return {
     "message": "Bulk assignment completed successfully.",
@@ -708,9 +707,9 @@ def bulk_auto_assign(
     "total_students": total_students,
     "already_assigned": already_assigned_count,
     "progress": {"assigned": already_assigned_count , "total": total_students},
-    "range": {"start": already_assigned_count + 1,"end": already_assigned_count + len(students)},
-    "next_assignment_start":already_assigned_count + 1,
-    "next_assignment_end":already_assigned_count + len(students),
+    "range": {"start": payload.from_serial,"end": payload.to_serial},
+    "next_assignment_start":payload.to_serial + 1,
+    "next_assignment_end": min(payload.to_serial + 30, total_students),
     "remaining_students": remaining_students,
     "first_student": new_assigned[0].name if new_assigned else None,
     "last_student": new_assigned[-1].name if new_assigned else None,

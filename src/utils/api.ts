@@ -115,21 +115,17 @@ export async function apiFetch(endpoint: string, options: ApiRequestOptions = {}
   }
 }
 
-export const parseUTCDate = (dateStr: string | Date | null | undefined): Date => {
+export const parseUTCDate = (
+  dateStr: string | Date | null | undefined
+): Date => {
   if (!dateStr) return new Date();
+
   if (dateStr instanceof Date) return dateStr;
-  if (typeof dateStr === 'string') {
-    let formatted = dateStr.trim();
-    if (formatted.includes(' ')) {
-      formatted = formatted.replace(' ', 'T');
-    }
-    if (formatted.includes('T')) {
-      if (!formatted.endsWith('Z') && !/[+-]\d{2}:\d{2}$/.test(formatted)) {
-        return new Date(formatted + 'Z');
-      }
-    }
-    return new Date(formatted);
+
+  if (typeof dateStr === "string") {
+    return new Date(dateStr.replace(" ", "T"));
   }
+
   return new Date(dateStr);
 };
 

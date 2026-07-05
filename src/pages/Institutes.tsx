@@ -59,7 +59,7 @@ export const Institutes: React.FC = () => {
     setContactEmail(inst.contact_email || '');
     setContactNumber(inst.contact_number || '');
     if (inst.deadline) {
-      setDeadline(parseUTCDate(inst.deadline).toISOString().substring(0, 16));
+      setDeadline(inst.deadline.replace(" ", "T").substring(0,16));
     } else {
       setDeadline('');
     }
@@ -78,7 +78,7 @@ export const Institutes: React.FC = () => {
       contact_person: contactPerson || null,
       contact_email: contactEmail || null,
       contact_number: contactNumber || null,
-      deadline: deadline ? new Date(deadline).toISOString() : null
+      deadline: deadline || null
     };
 
     try {

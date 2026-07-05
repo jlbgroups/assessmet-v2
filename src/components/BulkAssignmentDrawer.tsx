@@ -20,6 +20,8 @@ const BulkAssignmentDrawer: React.FC<BulkAssignmentDrawerProps> = ({
     const [loading, setLoading] = useState(false);
     const [assessments, setAssessments] = useState<any[]>([]);
     const [selectedAssessment, setSelectedAssessment] = useState("");
+    const [startDate, setStartDate] = useState("");
+    const [endDate, setEndDate] = useState("");
 
     const fetchSummary = async () => {
         try {
@@ -83,11 +85,13 @@ const BulkAssignmentDrawer: React.FC<BulkAssignmentDrawerProps> = ({
                         institute_id: instituteId,
                         from_serial: from,
                         to_serial: to,
+                        start_date:startDate,
+                        end_date:endDate
                     }),
                 }
             );
 
-            // Backend se assigned_count aayega
+            
             if (response.assigned_count === 0) {
 
                 alert("Selected students already have this assessment.");
@@ -120,10 +124,10 @@ const BulkAssignmentDrawer: React.FC<BulkAssignmentDrawerProps> = ({
         }
     }, [open]);
     useEffect(() => {
-        if (open && selectedAssessment){
+        if (open && selectedAssessment) {
             fetchSummary();
         }
-    },[selectedAssessment]
+    }, [selectedAssessment]
     );
 
     // const assignCount = rangeEnd - rangeStart + 1;
@@ -277,8 +281,48 @@ const BulkAssignmentDrawer: React.FC<BulkAssignmentDrawerProps> = ({
                                     />
 
                                 </div>
-
                             </div>
+                                <div >
+                                    <label className="block text-sm font-medium mb-3">
+                                        Assessment Window
+                                    </label>
+
+                                    <div className="grid grid-cols-2 gap-4">
+
+                                        <div>
+
+                                            <label className="block text-xs text-slate-500 mb-2">
+                                                Start Window
+                                            </label>
+
+                                            <input
+                                                type="datetime-local"
+                                                value={startDate}
+                                                onChange={(e) => setStartDate(e.target.value)}
+                                                className="w-full h-11 border rounded-lg px-3"
+                                            />
+
+                                        </div>
+
+                                        <div>
+
+                                            <label className="block text-xs text-slate-500 mb-2">
+                                                End Window
+                                            </label>
+
+                                            <input
+                                                type="datetime-local"
+                                                value={endDate}
+                                                onChange={(e) => setEndDate(e.target.value)}
+                                                className="w-full h-11 border rounded-lg px-3"
+                                            />
+
+                                        </div>
+
+                                    </div>
+
+                                </div>
+
 
                         </div>
 

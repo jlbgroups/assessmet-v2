@@ -589,8 +589,8 @@ export const Assessments: React.FC = () => {
         method: 'POST',
         body: JSON.stringify({
           institute_id: parseInt(selectedInstId),
-          start_date: new Date(assignStartDate).toISOString(),
-          end_date: new Date(assignEndDate).toISOString(),
+          start_date: assignStartDate,
+          end_date: assignEndDate,
           role: assignRole,
           job_title: assignJobTitle
         })

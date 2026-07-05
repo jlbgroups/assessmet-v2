@@ -348,6 +348,8 @@ class BulkAutoAssignRequest(BaseModel):
     institute_id: int
     from_serial: int
     to_serial: int
+    start_date: datetime
+    end_date: datetime
     start_date: Optional[datetime] = None
     end_date: Optional[datetime] = None
 

@@ -126,6 +126,7 @@ def get_institute_students(
         .order_by(models.User.name.asc())
         .all()
     )
+
     student_ids = [student.id for student in students]
     assignments = (
         db.query(models.Assignment)
@@ -202,37 +203,46 @@ def get_bulk_summary(
         .all()
     )
     total_students = len(students)
-    already_assigned = (
-        db.query(
-            func.coalesce(
-                func.sum(models.BulkAssignmentBatch.assigned_count),
-                0
-            )
-        )
+    assigned_user_ids = set(
+        row[0]
+        for row in db.query(models.Assignment.user_id)
         .filter(
-            models.BulkAssignmentBatch.institute_id == id,
-            models.BulkAssignmentBatch.assessment_id == assessment_id
+            models.Assignment.institute_id == id,
+            models.Assignment.assessment_id == assessment_id,
+            models.Assignment.user_id.isnot(None)
         )
-        .scalar()
+        .all()
     )
-    remaining_students = total_students - already_assigned
-    preview_students = students[
-        already_assigned : already_assigned + 5
-    ]
+    already_assigned = len(assigned_user_ids)
+    unassigned_students = [student for student in students if student.id not in assigned_user_ids]
+    remaining_students = len(unassigned_students)
+    
+    preview_students = unassigned_students[:5]
     preview = [
         {
-            "serial_no": already_assigned + index + 1,
+            "serial_no": students.index(student) + 1,
             "id": student.id,
             "name": student.name,
         }
-        for index, student in enumerate(preview_students)
+        for student in preview_students
     ]
-    next_range = {
-        "start": already_assigned + 1,
-        "end": min(
-            already_assigned + 30,
+    if unassigned_students:
+
+        first_serial = students.index(unassigned_students[0]) + 1
+
+        last_serial = min(
+            first_serial + 29,
             total_students
         )
+
+    else:
+
+        first_serial = 0
+        last_serial = 0
+
+    next_range = {
+        "start": first_serial,
+        "end": last_serial
     }
     return {
         "total_students": total_students,
@@ -331,9 +341,11 @@ def update_student(
     db: Session = Depends(get_db),
     admin: models.User = Depends(get_current_admin)
 ):
+    print("admin:", admin)
 
     student = (
         db.query(models.User)
+        
         .filter(
             models.User.id == student_id,
             models.User.role == "candidate"
