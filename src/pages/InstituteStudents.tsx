@@ -4,6 +4,7 @@ import { ArrowLeft, Search, Users, Trash2, Edit2, ChevronRight, ChevronDown } fr
 import AdminLayout from "../components/AdminLayout";
 import { apiFetch } from "../utils/api";
 import BulkAssignmentDrawer from "../components/BulkAssignmentDrawer";
+import AssignAssessmentModal from "../components/AssignAssessmentModal";
 
 const InstituteStudents: React.FC = () => {
     const { id } = useParams();
@@ -29,6 +30,14 @@ const InstituteStudents: React.FC = () => {
     const [editName, setEditName] = useState("");
     const [editEmail, setEditEmail] = useState("");
     const [editStatus, setEditStatus] = useState("active");
+    const [showAssignModal, setShowAssignModal] = useState(false);
+    const [selectedStudent, setSelectedStudent] = useState<any>(null);
+    const [assignAssessmentId, setAssignAssessmentId] = useState("");
+    const [assignStartDate, setAssignStartDate] = useState("");
+    const [assignEndDate, setAssignEndDate] = useState("");
+    const [assignRole, setAssignRole] = useState("");
+    const [assignJobTitle, setAssignJobTitle] = useState("");
+    const [assignSubmitting, setAssignSubmitting] = useState(false);
     const [expandedStudent, setExpandedStudent] = useState<number | null>(null);
 
     const fetchStudents = async () => {
@@ -117,6 +126,55 @@ const InstituteStudents: React.FC = () => {
             await fetchStudents();
         } catch (err: any) {
             alert(err.message);
+        }
+    };
+
+    const handleOpenAssign = async(student: any) =>{
+        await fetchAssessments();
+        setSelectedStudent(student);
+        setAssignAssessmentId("");
+        setAssignStartDate("");
+        setAssignEndDate("");
+        setAssignRole("");
+        setAssignJobTitle("");
+        setShowAssignModal(true);
+    };
+
+    const handleAssignAssessment = async () => {
+        if(!assignAssessmentId){
+            alert("Please select assessment");
+            return;
+        }
+        if(!assignStartDate){
+            alert("Please select start date & time")
+            return;
+        }
+        if(!assignEndDate){
+            alert("Please select end date & time")
+            return;
+        }
+        setAssignSubmitting(true);
+        try{
+            await apiFetch(
+                `/api/assessments/${assignAssessmentId}/assign`,
+                {
+                    method: "POST",
+                    body: JSON.stringify({
+                        user_id: selectedStudent.id,
+                        start_date: assignStartDate,
+                        end_date: assignEndDate,
+                        role: assignRole,
+                        job_title: assignJobTitle
+                    })
+                }
+            );
+            alert("Assessment Assign Successfully");
+            setShowAssignModal(false);
+            await fetchStudents();
+        } catch (err: any){
+            alert(err. message);
+        } finally{
+            setAssignSubmitting(false);
         }
     };
 
@@ -310,6 +368,13 @@ const InstituteStudents: React.FC = () => {
                                                         className="text-indigo-600 hover:text-indigo-700"
                                                     >
                                                         <Edit2 className="w-5 h-5" />
+                                                    </button>
+                                                    <button
+                                                        onClick={() => handleOpenAssign(student)}
+                                                        className="text-green-600 hover:text-green-700"
+                                                        title="Assign Assessment"
+                                                    >
+                                                        📋
                                                     </button>
 
                                                     <button
@@ -583,6 +648,32 @@ const InstituteStudents: React.FC = () => {
                 onClose={() => setShowBulkAssignModal(false)}
                 instituteId={Number(id)}
                 onSuccess={fetchStudents}
+            />
+            <AssignAssessmentModal
+                open={showAssignModal}
+                onClose={() => setShowAssignModal(false)}
+                student={selectedStudent}
+
+                assessments={assessments}
+
+                assignAssessmentId={assignAssessmentId}
+                setAssignAssessmentId={setAssignAssessmentId}
+
+                assignStartDate={assignStartDate}
+                setAssignStartDate={setAssignStartDate}
+
+                assignEndDate={assignEndDate}
+                setAssignEndDate={setAssignEndDate}
+
+                assignRole={assignRole}
+                setAssignRole={setAssignRole}
+
+                assignJobTitle={assignJobTitle}
+                setAssignJobTitle={setAssignJobTitle}
+
+                loading={assignSubmitting}
+
+                onAssign={handleAssignAssessment}
             />
 
         </AdminLayout>

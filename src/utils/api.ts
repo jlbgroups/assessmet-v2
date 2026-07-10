@@ -8,17 +8,29 @@ export const getAuthToken = () => localStorage.getItem('access_token');
 export const getRefreshToken = () => localStorage.getItem('refresh_token');
 export const getExamToken = () => localStorage.getItem('exam_session_token');
 
-export const setAuthSession = (accessToken: string, refreshToken: string, role: string, userId: number, userName: string) => {
+export const setAuthSession = (
+  accessToken: string, 
+  refreshToken: string, 
+  role: string, 
+  userId: number, 
+  userName: string,
+  refreshExpiresIn:number
+) => {
   localStorage.setItem('access_token', accessToken);
   localStorage.setItem('refresh_token', refreshToken);
   localStorage.setItem('user_role', role);
   localStorage.setItem('user_id', String(userId));
   localStorage.setItem('user_name', userName);
+  localStorage.setItem(
+    'refresh_expiry',
+    (Date.now()+refreshExpiresIn*1000).toString()
+  );
 };
 
 export const clearAuthSession = () => {
   localStorage.removeItem('access_token');
   localStorage.removeItem('refresh_token');
+  localStorage.removeItem('refresh_expiry');
   localStorage.removeItem('user_role');
   localStorage.removeItem('user_id');
   localStorage.removeItem('user_name');
@@ -62,6 +74,16 @@ export async function apiFetch(endpoint: string, options: ApiRequestOptions = {}
   }
 
   const fetchOptions = { ...options, headers };
+  const refreshExpiry = Number(localStorage.getItem("refresh_expiry"));
+  if(
+    refreshExpiry &&
+    Date.now() > refreshExpiry &&
+    !options.useExamToken
+  ){
+    clearAuthSession();
+    window.location.href = "/auth";
+    throw new Error("Session expired. Please login again.");
+  }
 
   try {
     const response = await fetch(url, fetchOptions);
@@ -78,7 +100,14 @@ export async function apiFetch(endpoint: string, options: ApiRequestOptions = {}
 
           if (refreshRes.ok) {
             const data = await refreshRes.json();
-            setAuthSession(data.access_token, data.refresh_token, data.role, data.user_id, data.name);
+            setAuthSession(
+              data.access_token, 
+              data.refresh_token, 
+              data.role, 
+              data.user_id, 
+              data.name,
+              data.refresh_expires_in
+            );
             isRefreshing = false;
             onRefreshed(data.access_token);
           } else {

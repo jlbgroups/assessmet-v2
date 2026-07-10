@@ -130,14 +130,14 @@ function App() {
             </ProtectedRoute>
           }
         />
-        <Route
+        {/* <Route
           path="/feedback/:attempt_id"
           element={
             <ProtectedRoute allowedRole="candidate">
               <Feedback />
             </ProtectedRoute>
           }
-        />
+        /> */}
         <Route 
         path="/privacy-policy" 
         element={<PrivacyPolicy />}

@@ -470,6 +470,24 @@ def assign_assessment(id: int, assign_data: Dict[str, Any], db: Session = Depend
         
     institute_id = assign_data.get("institute_id")
     user_id = assign_data.get("user_id")
+    student = None
+    if user_id:
+        student = (
+            db.query(models.User)
+            .filter(
+                models.User.id == user_id,
+                models.User.role == "candidate",
+                models.User.status == "active"
+            )
+            .first()
+        )
+        if not student:
+            raise HTTPException(
+                status_code=404,
+                detail="Student not found"
+            )
+        if not institute_id:
+            institute_id = student.institute_id
     start_date_str = assign_data.get("start_date")
     end_date_str = assign_data.get("end_date")
     role = assign_data.get("role")
@@ -480,7 +498,6 @@ def assign_assessment(id: int, assign_data: Dict[str, Any], db: Session = Depend
         
     dup = db.query(models.Assignment).filter(
         models.Assignment.assessment_id == id,
-        models.Assignment.institute_id == institute_id,
         models.Assignment.user_id == user_id
     ).first()
     
@@ -915,22 +932,22 @@ async def submit_assessment(id: int, submit_data: schemas.AttemptSubmitRequest, 
         )
 
 
-@attempts_router.post("/{attempt_id}/feedback")
-def submit_feedback(attempt_id: int, feedback_data: schemas.FeedbackSubmit, db: Session = Depends(get_db), current_user: models.User = Depends(get_current_user)):
-    attempt = db.query(models.Attempt).filter(models.Attempt.id == attempt_id).first()
-    if not attempt:
-        raise HTTPException(status_code=404, detail="Attempt not found")
+# @attempts_router.post("/{attempt_id}/feedback")
+# def submit_feedback(attempt_id: int, feedback_data: schemas.FeedbackSubmit, db: Session = Depends(get_db), current_user: models.User = Depends(get_current_user)):
+#     attempt = db.query(models.Attempt).filter(models.Attempt.id == attempt_id).first()
+#     if not attempt:
+#         raise HTTPException(status_code=404, detail="Attempt not found")
         
-    if attempt.user_id != current_user.id:
-        raise HTTPException(status_code=403, detail="Unauthorized to submit feedback for this attempt")
+#     if attempt.user_id != current_user.id:
+#         raise HTTPException(status_code=403, detail="Unauthorized to submit feedback for this attempt")
         
-    if attempt.feedback_rating is not None:
-        raise HTTPException(status_code=400, detail="Feedback already submitted")
+#     if attempt.feedback_rating is not None:
+#         raise HTTPException(status_code=400, detail="Feedback already submitted")
         
-    if attempt.status != "completed":
-        raise HTTPException(status_code=400, detail="Cannot submit feedback for an incomplete exam")
+#     if attempt.status != "completed":
+#         raise HTTPException(status_code=400, detail="Cannot submit feedback for an incomplete exam")
         
-    attempt.feedback_rating = feedback_data.rating
-    attempt.feedback_comments = feedback_data.comments
-    db.commit()
-    return {"detail": "Feedback submitted successfully"}
+#     attempt.feedback_rating = feedback_data.rating
+#     attempt.feedback_comments = feedback_data.comments
+#     db.commit()
+#     return {"detail": "Feedback submitted successfully"}

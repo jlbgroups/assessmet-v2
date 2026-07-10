@@ -167,6 +167,8 @@ def login(login_data: schemas.UserLogin, request: Request, background_tasks: Bac
         return {
             "access_token": access_token,
             "refresh_token": refresh_token,
+            "expires_in":auth.ACCESS_TOKEN_EXPIRE_MINUTES * 60,
+            "refresh_expires_in": auth.REFRESH_TOKEN_EXPIRE_HOURS * 60*60,
             "token_type": "bearer",
             "role": user_row["role"],
             "user_id": user_row["id"],

@@ -88,7 +88,7 @@ export const Auth: React.FC = () => {
           response.refresh_token,
           response.role,
           response.user_id,
-          response.name
+          response.name,
         );
 
         if (response.role === 'admin') {
