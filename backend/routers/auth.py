@@ -216,6 +216,8 @@ def refresh(refresh_data: schemas.TokenRefreshRequest, db: Session = Depends(get
     return {
         "access_token": access_token,
         "refresh_token": new_refresh_token,
+        "expires_in": auth.ACCESS_TOKEN_EXPIRE_MINUTES * 60,
+        "refresh_expires_in": auth.REFRESH_TOKEN_EXPIRE_HOURS * 60 * 60,
         "token_type": "bearer",
         "role": user.role,
         "user_id": user.id,
