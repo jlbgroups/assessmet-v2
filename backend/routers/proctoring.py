@@ -6,7 +6,8 @@ from fastapi.responses import FileResponse
 from sqlalchemy.orm import Session, joinedload
 from sqlalchemy import func, and_
 from database import get_db
-import models, schemas, auth, supabase_client
+import models, schemas, auth
+import storage
 from routers.auth import get_current_admin, get_current_user
 
 router = APIRouter(prefix="/proctoring", tags=["Proctoring"])
@@ -182,7 +183,7 @@ async def upload_violation_screenshot(
     
     content = await file.read()
     
-    screenshot_path = supabase_client.upload_screenshot(attempt_id, content)
+    screenshot_path = storage.upload_screenshot(attempt_id, content)
     
     filename_lower = file.filename.lower()
     if "screenshare" in filename_lower:
@@ -224,7 +225,7 @@ async def upload_violation_screenshot(
             severity = "info"
             details = "Periodic live feed snapshot"
         
-    signed_url = supabase_client.get_screenshot_signed_url(screenshot_path)
+    signed_url = storage.get_screenshot_url(screenshot_path)
     
     from services.tasks import task_service
     task_service.queue_screenshot_violation_log(
@@ -367,7 +368,7 @@ def get_violation_image(
         
     db.close()
     
-    signed_url = supabase_client.get_screenshot_signed_url(violation.screenshot_path)
+    signed_url = storage.get_screenshot_signed_url(violation.screenshot_path)
     return {"url": signed_url}
 
 
@@ -425,7 +426,7 @@ def get_active_candidates(db: Session = Depends(get_db), admin: models.User = De
     
     if active_attempt_ids:
         screenshot_paths = [v.screenshot_path for v in last_violations_list if v.screenshot_path]
-        signed_urls_map = supabase_client.get_screenshots_signed_urls(screenshot_paths)
+        signed_urls_map = storage.get_screenshots_signed_urls(screenshot_paths)
         
     results = []
     for attempt in active_attempts:

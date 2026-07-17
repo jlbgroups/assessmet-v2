@@ -433,7 +433,8 @@ export const AssessmentEngine: React.FC = () => {
       intervalRef.current = null;
     }
 
-    const wsUrl = `ws://localhost:8000/api/proctoring/ws`;
+    const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
+    const wsUrl = `${protocol}//${window.location.host}/api/proctoring/ws`;;
     const ws = new WebSocket(wsUrl);
     wsRef.current = ws;
 
@@ -947,15 +948,53 @@ export const AssessmentEngine: React.FC = () => {
             <div className="space-y-6">
               <h2 className="text-xl font-bold text-white leading-relaxed text-left">{currentQuestion.title}</h2>
 
-              {currentQuestion.type === 'code_output_mcq' && currentQuestion.options?.code && (
-                <div className="mt-4 bg-slate-900 border border-slate-800 rounded-card overflow-hidden shadow-xl max-w-2xl text-left">
-                  <div className="px-5 py-2 border-b border-slate-800 bg-slate-955/60 text-[10px] text-slate-400 font-bold uppercase font-mono">
-                    Code Snippet (Question Prompt)
+              {currentQuestion.type === "code_output_mcq" &&
+                currentQuestion.options?.code && (
+                  <div className="mt-5 max-w-3xl overflow-hidden rounded-xl border border-slate-800 bg-slate-900 shadow-xl">
+
+                    <div className="flex items-center justify-between border-b border-slate-800 bg-slate-950 px-5 py-3">
+                      <span className="text-xs font-semibold uppercase tracking-wider text-slate-400">
+                        Code Snippet
+                      </span>
+
+                      <span className="rounded-md bg-slate-800 px-3 py-1 text-[10px] font-bold uppercase text-indigo-300">
+                        {(currentQuestion.options?.language || "python").toUpperCase()}
+                      </span>
+                    </div>
+
+                    <Editor
+                      height="300px"
+                      language={
+                        currentQuestion.options?.language === "cpp"
+                          ? "cpp"
+                          : currentQuestion.options?.language || "python"
+                      }
+                      theme="vs-dark"
+                      value={currentQuestion.options?.code || ""}
+                      options={{
+                        readOnly: true,
+                        minimap: {
+                          enabled: false
+                        },
+                        scrollBeyondLastLine: false,
+                        automaticLayout: true,
+                        lineNumbers: "on",
+                        wordWrap: "on",
+                        fontSize: 14,
+                        tabSize: 4,
+                        fontFamily: "'Fira Code', monospace",
+                        cursorStyle: "line",
+                        renderLineHighlight: "none",
+                        folding: false,
+                        contextmenu: false,
+                        padding: {
+                          top: 10,
+                          bottom: 10
+                        }
+                      }}
+                    />
+
                   </div>
-                  <pre className="bg-slate-950 p-5 text-emerald-405 font-mono text-xs overflow-x-auto leading-relaxed select-all">
-                    <code>{currentQuestion.options.code}</code>
-                  </pre>
-                </div>
               )}
 
               <div className="mt-8">

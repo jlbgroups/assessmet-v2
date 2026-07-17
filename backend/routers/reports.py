@@ -5,7 +5,7 @@ from sqlalchemy import func, cast, Date
 from database import get_db
 import models, schemas
 from routers.auth import get_current_admin, get_current_user
-from supabase_client import get_screenshots_signed_urls
+from storage import get_screenshots_urls
 from typing import List
 
 
@@ -56,7 +56,7 @@ def get_candidate_report(attempt_id: int, db: Session = Depends(get_db), current
     db.close()
     
     screenshot_paths = [v.screenshot_path for v in violations if v.screenshot_path]
-    signed_urls_map = get_screenshots_signed_urls(screenshot_paths)
+    signed_urls_map = get_screenshots_urls(screenshot_paths)
     
     violation_list = []
     for v in violations:

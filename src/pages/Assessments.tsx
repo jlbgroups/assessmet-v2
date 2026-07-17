@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import Editor from "@monaco-editor/react";
 import {
   GraduationCap,
   Plus,
@@ -416,9 +417,20 @@ export const Assessments: React.FC = () => {
                 continue;
               }
             }
+            const 
+              language = languageIdx !== -1
+              ? (row[languageIdx] || "python").trim().toLowerCase()
+              : "python";
             finalOptions = {
+              language,
               code,
-              choices: choicesList.length >= 4 ? choicesList.slice(0, 4) : [...choicesList, ...Array(4 - choicesList.length).fill('').map((_, idx) => `Choice ${String.fromCharCode(65 + choicesList.length + idx)}`)]
+              choices: choicesList.length >= 4 
+                ? choicesList.slice(0, 4) 
+                : [
+                  ...choicesList, 
+                  ...Array(4 - choicesList.length)
+                  .fill('')
+                  .map((_, idx) => `Choice ${String.fromCharCode(65 + choicesList.length + idx)}`)]
             };
           }
 
@@ -495,7 +507,8 @@ export const Assessments: React.FC = () => {
         updated[index].correct_answer = 'Option A';
       } else if (value === 'code_output_mcq') {
         updated[index].options = {
-          code: 'def solution():\n    print("Hello, World!")\n\nsolution()',
+          language: "python",
+          code: 'def solution():\n   print("Hello, World!")\n\nsolution()',
           choices: ['Hello, World!', 'solution()', 'None', 'Error']
         };
         updated[index].correct_answer = 'Hello, World!';
@@ -923,17 +936,66 @@ export const Assessments: React.FC = () => {
                         {q.type === 'code_output_mcq' && (
                           <div className="space-y-4">
                             <div>
-                              <label className="text-[9px] font-bold text-slate-500 uppercase block mb-1">Code Snippet (Question Prompt)</label>
-                              <textarea
-                                rows={5}
-                                required
-                                value={q.options?.code || ''}
+                              <label className="text-[9px] font-bold text-slate-500 uppercase block mb-1">
+                                Programming Language
+                              </label>
+
+                              <select
+                                value={q.options?.language || "python"}
                                 onChange={(e) => {
-                                  const opts = { ...q.options, code: e.target.value };
-                                  handleQuestionChange(idx, 'options', opts);
+                                  const opts = {
+                                    ...q.options,
+                                    language: e.target.value
+                                  };
+
+                                  handleQuestionChange(idx, "options", opts);
                                 }}
-                                className="w-full border border-slate-200 rounded-input p-3 text-xs font-mono focus:border-indigo-500 focus:outline-none bg-slate-900 text-slate-200"
+                                className="w-full h-9 border border-slate-200 rounded-input px-3 text-xs focus:outline-none"
+                              >
+                                <option value="python">Python</option>
+                                <option value="java">Java</option>
+                                <option value="cpp">C++</option>
+                                <option value="javascript">JavaScript</option>
+                              </select>
+                            </div>
+                            <div>
+                              <label className="text-[9px] font-bold text-slate-500 uppercase block mb-1">Code Snippet (Question Prompt)</label>
+                              <div className="overflow-hidden rounded-xl border border-slate-300">
+                              <Editor
+                                height="320px"
+                                language={
+                                  q.options?.language === "cpp"
+                                    ? "cpp"
+                                    : q.options?.language || "python"
+                                }
+                                theme="vs-dark"
+                                value={q.options?.code || ""}
+                                onChange={(value) => {
+                                  const opts = {
+                                    ...q.options,
+                                    code: value || ""
+                                  };
+
+                                  handleQuestionChange(idx, "options", opts);
+                                }}
+                                options={{
+                                  minimap: {
+                                    enabled: false
+                                  },
+                                  fontSize: 14,
+                                  scrollBeyondLastLine: false,
+                                  automaticLayout: true,
+                                  wordWrap: "on",
+                                  lineNumbers: "on",
+                                  tabSize: 4,
+                                  fontFamily: "'Fira Code', monospace",
+                                  padding: {
+                                    top: 12,
+                                    bottom: 12
+                                  }
+                                }}
                               />
+                            </div>
                             </div>
                             <div className="space-y-2.5">
                               <label className="text-[9px] font-bold text-slate-500 uppercase block">Choices Configuration (Expected Outputs)</label>

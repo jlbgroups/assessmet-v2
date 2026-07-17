@@ -1,5 +1,7 @@
 import os
 from fastapi import FastAPI, Depends
+from fastapi.staticfiles import StaticFiles
+from pathlib import Path
 from fastapi.middleware.cors import CORSMiddleware
 from database import engine, Base
 from routers import auth, institutes, assessments, proctoring, reports, code
@@ -7,10 +9,11 @@ from routers import auth, institutes, assessments, proctoring, reports, code
 Base.metadata.create_all(bind=engine)
 
 app = FastAPI(
-    title="AssessPro AI API",
+    title="Assessment AI API",
     description="Secure online assessment platform API with AI-proctoring features.",
     version="1.0"
 )
+
 
 origins = [
     "http://localhost:5173",  
@@ -26,7 +29,14 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+UPLOAD_DIR = Path("uploads")
+UPLOAD_DIR.mkdir(parents=True, exist_ok=True)
 
+app.mount(
+    "/uploads",
+    StaticFiles(directory=UPLOAD_DIR),
+    name="uploads"
+)
 app.include_router(auth.router, prefix="/api")
 app.include_router(institutes.router, prefix="/api")
 app.include_router(assessments.router, prefix="/api")
